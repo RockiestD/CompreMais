@@ -1,10 +1,10 @@
 use master
 go
 
-IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = 'Compremais')
-	DROP DATABASE Compremais
+IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = 'Compramais')
+	DROP DATABASE Compramais
 
-CREATE DATABASE Compremais
+CREATE DATABASE Compramais
 go
 
 use Compramais
@@ -12,12 +12,10 @@ go
 Set dateformat DMY
 go
 
-create table Funcionarios(
+create table Funcionario(
 idFuncionarios int identity not null,
-nome varchar(45),
 usuario varchar(20) unique,
 senha varchar(20),
-dataNasc date,
 primary key(idFuncionarios)
 )
 
@@ -95,57 +93,163 @@ create index XProduto on Produto(idProduto, idFornecedor, idCategoria)
 create index XDetalhesPedido on DetalhesPedido(idPedido, idProduto)
 
 go
------- Procedures -------
+
+------ === Inserts === -------
+
+-- ADM
+
+insert into Funcionario (usuario, senha) values ('adm1', '2814162')
+
+-- Categorias
+
+insert into categorias (descr) values ('Alimentos');
+insert into categorias (descr) values ('Bebidas');
+insert into categorias (descr) values ('Limpeza e higiene');
+
+------ === Procedures === -------
 
 -- CRUD Clientes
+go
 
 create procedure CriaCliente
-@nome varchar(45),
-@usuario varchar(20),
-@senha varchar(20)
+    @nome varchar(45),
+    @endereco varchar(50),
+    @cidade varchar(50),
+    @cep varchar(10),
+    @bairro varchar(40),
+    @complemento varchar(255),
+    @telefone varchar(24),
+    @usuario varchar(20),
+    @senha varchar(20)
 as
 begin
-insert into Clientes(nome, usuario, senha)
-values (@nome, @usuario, @senha);
+    insert into clientes (nome, endereco, cidade, cep, bairro, complemento, telefone, usuario, senha)
+    values (@nome, @endereco, @cidade, @cep, @bairro, @complemento, @telefone, @usuario, @senha);
 end
 
 go
 
-create procedure BuscaCliente
+
+create procedure BuscaClientes
 as
 begin
-select * from Clientes;
+    select * from clientes;
 end
 
 go
+
 
 create procedure BuscaClientePorID
-@id int
+    @id int
 as
 begin
-select * from Clientes where idCliente = @id
+    select * from clientes
+    where idcliente = @id;
 end
 
-go 
+go
+
 
 create procedure AtualizaCliente
     @usuario varchar(20),
     @nome varchar(45),
+    @endereco varchar(50),
+    @cidade varchar(50),
+    @cep varchar(10),
+    @bairro varchar(40),
+    @complemento varchar(255),
+    @telefone varchar(24),
     @senha varchar(20)
 as
 begin
-    update Clientes set nome = @nome, senha = @senha where usuario = @usuario;
+    update clientes
+    set nome = @nome,
+        endereco = @endereco,
+        cidade = @cidade,
+        cep = @cep,
+        bairro = @bairro,
+        complemento = @complemento,
+        telefone = @telefone,
+        senha = @senha
+    where usuario = @usuario;
 end
 
 go
 
+
 create procedure DeletaCliente
-    @usuario varchar(20)
+    @id int
 as
 begin
     delete from clientes
-    where usuario = @usuario;
+    where idcliente = @id;
 end
 
 -- CRUD Produtos
+go
 
+create procedure CriaProduto
+    @idfornecedor int,
+    @idcategoria int,
+    @nome varchar(60),
+    @descr varchar(255),
+    @preco decimal(7,2),
+    @imagem varbinary(max),
+    @unidades int
+as
+begin
+    insert into produto (idfornecedor, idcategoria, nome, descr, preco, imagem, unidades)
+    values (@idfornecedor, @idcategoria, @nome, @descr, @preco, @imagem, @unidades);
+end
+
+go
+
+create procedure BuscaProduto
+as
+begin
+    select * from produto;
+end
+
+go
+
+create procedure BuscaProdutoPorID
+    @id int
+as
+begin
+    select * from produto
+    where idproduto = @id;
+end
+
+go
+
+create procedure AtualizaProduto
+    @id int,
+    @idfornecedor int,
+    @idcategoria int,
+    @nome varchar(60),
+    @descr varchar(255),
+    @preco decimal(7,2),
+    @imagem varbinary(max),
+    @unidades int
+as
+begin
+    update produto
+    set idfornecedor = @idfornecedor,
+        idcategoria = @idcategoria,
+        nome = @nome,
+        descr = @descr,
+        preco = @preco,
+        imagem = @imagem,
+        unidades = @unidades
+    where idproduto = @id;
+end
+
+go
+
+create procedure DeletaProduto
+    @id int
+as
+begin
+    delete from produto
+    where idproduto = @id;
+end
