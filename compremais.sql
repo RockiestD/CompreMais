@@ -1,10 +1,10 @@
 use master
 go
 
-IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = 'Compramais')
-	DROP DATABASE Compramais
+IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = 'Compremais')
+	DROP DATABASE Compremais
 
-CREATE DATABASE Compramais
+CREATE DATABASE Compremais
 go
 
 use Compramais
@@ -148,3 +148,4 @@ begin
 end
 
 -- CRUD Produtos
+
